@@ -23,7 +23,8 @@ We have created a Dockerfile that contains the exact versions of the libraries r
 
 ### Using the container (example).
 Mount a volume that contains both the code you want to refactor and all the scripts in this repository.
-```docker run -v ~/code:/code -ti refactor-image  /bin/bash
+```
+docker run -v ~/code:/code -ti refactor-image  /bin/bash
 cd code
 python3 main.py --file haskell/Main1.hs --iterations 1 --type manual --maxTemp 50
 ```
