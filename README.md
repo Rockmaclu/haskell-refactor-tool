@@ -19,7 +19,9 @@ Two main modes:
 We have created a Dockerfile that contains the exact versions of the libraries required for running this script. 
 
 ### Building the image
-``` docker build . -t refactor-image ```
+```
+docker build . -t refactor-image
+```
 
 ### Using the container (example).
 Mount a volume that contains both the code you want to refactor and all the scripts in this repository.
