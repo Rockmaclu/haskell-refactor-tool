@@ -1,7 +1,6 @@
 ### IMPORTS ###
 import os
 import sys
-import json
 import random
 import math
 import argparse
@@ -33,12 +32,12 @@ def menu():
 
 # Inicia la refactorizacion manual.
 def initManualRefactoring(haskellFile):
-    jsonRefactors = prioritizeRefactors(parseFile(haskellFile),True)
-    codeEval.append({"file": haskellFile,"quality": evaluateCode(jsonRefactors)})    
+    refactors = prioritizeRefactors(parseFile(haskellFile),True)
+    codeEval.append({"file": haskellFile,"quality": evaluateCode(refactors)})    
     
-    listOfNeighbours = createNeighborhood(jsonRefactors,1)
+    listOfNeighbours = createNeighborhood(refactors,1)
     i = 0
-    for neighbour in json.loads(listOfNeighbours):
+    for neighbour in listOfNeighbours:
         for refactor in neighbour:
             if seeRefactor(haskellFile,refactor):
                 continue
@@ -51,10 +50,9 @@ def initManualRefactoring(haskellFile):
 
 # Inicia el templado simulado.
 def initSimulatedAnnealing(haskellFile,maxTemp):
-
-    jsonRefactors = prioritizeRefactors(parseFile(haskellFile),False)
-    codeEval.append({"file": haskellFile,"quality": evaluateCode(jsonRefactors)})
-    currentNeighbour = json.loads(createNeighborhood(jsonRefactors, 1))[0]
+    refactors = prioritizeRefactors(parseFile(haskellFile),False)
+    codeEval.append({"file": haskellFile,"quality": evaluateCode(refactors)})
+    currentNeighbour = createNeighborhood(refactors, 1)[0]
     
     minTemp = 1
     currentTemp = maxTemp
@@ -81,8 +79,8 @@ def initSimulatedAnnealing(haskellFile,maxTemp):
         
         codeEval.append({"file": haskellFile,"quality": quality})
         
-        jsonRefactors = prioritizeRefactors(parseFile(haskellFile),False)
-        currentNeighbour = json.loads(createNeighborhood(jsonRefactors, 1))[0]
+        refactors = prioritizeRefactors(parseFile(haskellFile),False)
+        currentNeighbour = createNeighborhood(refactors, 1)[0]
 
         currentTemp = currentTemp - 3
 
@@ -141,8 +139,6 @@ def main():
     else:
         print("Preserving intermediate folders.")
         
-
-
 if __name__ == "__main__":
     main()
 

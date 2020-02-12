@@ -1,4 +1,3 @@
-import json
 import random
 import copy
 
@@ -8,7 +7,6 @@ posibleRefactors = ["ExtractBinding","InlineBinding","NoRefactor"]
 # Asigna aleatoriamente al conjunto de posibles refactorizaciones una accion determinada.
 def createNeighborhood(refactors,n):
     listOfNeighbours = []
-    refactors = json.loads(refactors)
     for i in range(0,n):
         neighbour = []
         for refactor in refactors:
@@ -17,7 +15,7 @@ def createNeighborhood(refactors,n):
             neighbour.append(newRefactor)
         listOfNeighbours.append(neighbour)
 
-    return json.dumps(listOfNeighbours,indent=4)
+    return listOfNeighbours
 
 # Cambia aleatoramiente la accion de una posible refactorizacion dentro del vecindario.
 def mutateNeighbour(neighbour):

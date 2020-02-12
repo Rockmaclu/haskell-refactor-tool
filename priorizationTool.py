@@ -1,4 +1,3 @@
-import json
 import yaml
 
 # Lista de errores posibles detectables por la herramienta Homplexity (algunos no funcionan bien).
@@ -45,12 +44,10 @@ def loadWeights():
 # Funcion que prioriza las refactorizaciones y puede devolverlas o no ordenadas segun su prioridad.
 def prioritizeRefactors(refactors,sort):
     loadWeights()
-
-    refactors = json.loads(refactors)
     for refactor in refactors:
         refactor = definePriority(refactor) 
     if sort == True:
-        return json.dumps(sorted(refactors, key=lambda k: k['nPriority'],reverse=True),indent=4) 
+        return sorted(refactors, key=lambda k: k['nPriority'],reverse=True)
     else:
-        return json.dumps(refactors,indent=4)
+        return refactors
     

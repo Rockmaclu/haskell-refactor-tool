@@ -1,4 +1,3 @@
-import json
 import re
 import subprocess
 import yaml
@@ -28,7 +27,7 @@ def parseList(listCodeSmells):
     result = []
     for codeSmell in listCodeSmells:
         result.append(parseLine(codeSmell))
-    return json.dumps(result,indent=4)
+    return result
 
 # Parsea un string con todas las refactorizaciones y lee cada una de las lineas. Luego se las pasa al parseador de listas.
 def parseDocument(refactors):
@@ -82,8 +81,8 @@ def runHomplexity(haskellFile,severity):
 
 # Se encarga de extraer todos los code-smells del archivo que se le pasa y devuelve un json ordenado de los mismos.
 def parseFile(fileLocalization):
-    criticalRefactors = json.loads(parseDocument(runHomplexity(fileLocalization,"Critical")))
-    warningRefactors = json.loads(parseDocument(runHomplexity(fileLocalization,"Warning")))
+    criticalRefactors = parseDocument(runHomplexity(fileLocalization,"Critical"))
+    warningRefactors = parseDocument(runHomplexity(fileLocalization,"Warning"))
     
     if len(criticalRefactors) != 0:
         for criticalRefactor in criticalRefactors:
@@ -92,6 +91,6 @@ def parseFile(fileLocalization):
                     warningRefactors = list(filter(lambda i: i['line'] != warningRefactor['line'], warningRefactors)) 
                     break;
                 
-    refactors = json.dumps(criticalRefactors + warningRefactors,indent=4)
+    refactors = criticalRefactors + warningRefactors
 
     return refactors

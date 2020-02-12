@@ -71,7 +71,7 @@ def seeRefactor(haskellFile,refactor):
     if execString == "":
         return True
     result = (subprocess.run(mainargument + " \"" + execString + "\" " + fileLocalization+"/cache",stdout=subprocess.PIPE,shell=True)).stdout
-    print(result)
+    
     if (b'Loaded module:'  in result.splitlines()[-1]):
         printCodeDifference(haskellFile, auxFile)
         return False
