@@ -1,0 +1,25 @@
+homplexityArguments:
+# severity: Warning           #{Debug|Info|Warning|Critical} Warning
+    constructorDepthW: 6        #INT 6
+    constructorDepthC: 9        #INT 9
+    numFunctionArgumentsW: 5    #INT 5
+    numFunctionArgumentsC: 9    #INT 9
+    moduleLinesW: 500           #INT 500
+    moduleLinesC: 3000          #INT 3000
+    functionLineW: 1            #INT 20
+    functionLineC: 3            #INT 40
+    functionDepthW: 4           #INT 4
+    functionDepthC: 8           #INT 8
+    functionCCW: 20             #INT 20
+    functionCCC: 50             #INT 50
+
+priorizationToolWeight:
+    warning: 1
+    critical: 5
+
+    constructorDepth: 4
+    numFunctionArguments: 1
+    moduleLine: 2
+    functionLine: 2
+    functionDepth: 5
+    functionCC: 10
