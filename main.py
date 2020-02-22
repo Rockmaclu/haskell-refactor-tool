@@ -48,6 +48,23 @@ def initManualRefactoring(haskellFile):
 
         i = i + 1
 
+# Inicia la refactorizacion al azar.
+def initRandomRefactoring(haskellFile,maxIterations):
+    i = 0
+
+    while True:    
+        refactors = prioritizeRefactors(parseFile(haskellFile),False)
+        codeEval.append({"file": haskellFile,"quality": evaluateCode(refactors)})    
+        neighbour = createNeighborhood(refactors,1)[0]
+
+        refactor = random.choice(neighbour)
+        haskellFile = applyRefactor(haskellFile,refactor,str(i))
+
+        i = i + 1
+        if i == maxIterations:
+            break
+
+
 # Inicia el templado simulado.
 def initSimulatedAnnealing(haskellFile,maxTemp):
     refactors = prioritizeRefactors(parseFile(haskellFile),False)
@@ -104,8 +121,8 @@ def main():
 
     parser.add_argument("--file", type=str, required=True, help="file to refactor")
     parser.add_argument("--iterations", default=1, type=int, required=True, help="number of iterations")
-    parser.add_argument("--type", choices=["SA", "manual"], required=True, type=str, help="refactor mode")
-    parser.add_argument("--maxTemp", default=20, type=int, help="max temperature in simulated annealing (default = 20)")
+    parser.add_argument("--type", choices=["SA", "interactive","random"], required=True, type=str, help="refactor mode")
+    parser.add_argument("--maxTempIterations", default=20, type=int, help="max temperature in simulated annealing (default = 20)")
     interFiles_parser = parser.add_mutually_exclusive_group(required=False)
     interFiles_parser.add_argument('--intermediate-folders', dest='interFolders', action='store_true', help="save intermediate folders")
     interFiles_parser.add_argument('--no--intermediate-folders', dest='interFolders', action='store_false', help="don't save intermediate folders")
@@ -118,17 +135,26 @@ def main():
     
     global codeEval
     
-    if args.type == 'manual':
+    if args.type == 'interactive':
         for iteration in range(0,numIterations):
             print("Manual - Iteration number: " + str(iteration))
             initManualRefactoring(args.file)
             copyLastFile(codeEval,refactorFileLocalization,iteration)
             print(codeEval)
             codeEval = []
+    
     elif args.type == 'SA':
         for iteration in range (0,numIterations):
             print("SA - Iteration number: " + str(iteration))
-            initSimulatedAnnealing(args.file,args.maxTemp)
+            initSimulatedAnnealing(args.file,args.maxTempIterations)
+            copyLastFile(codeEval,refactorFileLocalization,iteration)
+            print(codeEval)
+            codeEval = []
+    
+    elif args.type == 'random':
+        for iteration in range (0,numIterations):
+            print("Random - Iteration number: " + str(iteration))
+            initRandomRefactoring(args.file,args.maxTempIterations)
             copyLastFile(codeEval,refactorFileLocalization,iteration)
             print(codeEval)
             codeEval = []

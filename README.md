@@ -9,8 +9,9 @@ This tool uses two main external libraries.
 
 ### Modes 
 Two main modes:
-* Manual. Accept or deny a sorted list of refactors manually.
-* SA (Simulated Annealing). Automatic code refactor using SA algorithm. (Still not done)
+* Interactive. Accept or deny a sorted list of refactors manually.
+* SA (Simulated Annealing). Automatic code refactor using SA algorithm. (Still not tested correctly)
+* Random. Automatic code Refactor using random algorithm.
 
 ### Limits.
 * Can only refactor a few types of code-smells. This is caused because there are not a lot of posible refactors and can be fixed if other tools is used or developing new refactors for Haskell-Tools.
@@ -29,7 +30,7 @@ Mount a volume that contains both the code you want to refactor and all the scri
 ```
 docker run -v ~/code:/code -ti refactor-image  /bin/bash
 cd code
-python3 main.py --file haskell/Main1.hs --iterations 1 --type manual --maxTemp 50
+python3 main.py --file haskell/Main1.hs --iterations 1 --type manual --maxTempIterations 50
 ```
 
 This is not ideal. The building process can take some time and the builded image is heavy but it's a temporary solution that we have used. We will improve this.
