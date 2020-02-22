@@ -1,5 +1,5 @@
 # haskell-refactor-tool
-This is a prototype which was done in the context of an research on automatic code refactoring for the GIICIS group. 
+This is a prototype which was done in the context of a research on automatic code refactoring for the GIICIS group. 
 
 ## Features
 ### Libraries
@@ -10,15 +10,15 @@ This tool uses two main external libraries.
 ### Modes 
 Two main modes:
 * Interactive. Accept or deny a sorted list of refactors manually.
-* SA (Simulated Annealing). Automatic code refactor using SA algorithm. (Still not tested correctly)
+* SA (Simulated Annealing). Automatic code refactor using SA algorithm. (Not completed)
 * Random. Automatic code Refactor using random algorithm.
 
 ### Limits.
-* Can only refactor a few types of code-smells. This is caused because there are not a lot of posible refactors and can be fixed if other tools is used or developing new refactors for Haskell-Tools.
+* Can only refactor a few types of code-smells. This is caused because there aren't a lot of posible refactors. However this can be fixed if other tool is used or developing new refactors for Haskell-Tools.
 * Refactor one file at the time.
 
 ## Usage
-We have created a Dockerfile that contains the exact versions of the libraries required for running this script and is uploaded to this repo. 
+We have created a Dockerfile that contains the exact versions of the libraries required for running this script and it's uploaded to this repository. 
 
 ### Building the image
 ```
