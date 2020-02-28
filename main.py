@@ -14,7 +14,7 @@ from priorizationTool import prioritizeRefactors
 
 ### VARS ###
 
-# Variable que contiene la direccion de todos los archivos generados junto con su calidad.
+# Variable que contiene la direccion de todos los archivos temporales generados junto con su calidad.
 codeEval = []
 
 ### FUNCTIONS ###
@@ -29,6 +29,11 @@ def menu():
     else:
         print("Invalid char. Try again.")
         menu()
+
+#Funcion que devuelve el nombre del archivo de mejor calidad.
+def getBestQuality(codeEval):
+    maxTuple = min(codeEval, key=lambda item: item['quality'])
+    return maxTuple['file']
 
 # Inicia la refactorizacion manual.
 def initManualRefactoring(haskellFile):
@@ -66,16 +71,18 @@ def initRandomRefactoring(haskellFile,maxIterations):
 
 
 # Inicia el templado simulado.
-def initSimulatedAnnealing(haskellFile,maxTemp):
-    refactors = prioritizeRefactors(parseFile(haskellFile),False)
-    codeEval.append({"file": haskellFile,"quality": evaluateCode(refactors)})
-    currentNeighbour = createNeighborhood(refactors, 1)[0]
+def initSimulatedAnnealing(haskellFile,maxTemp,deltaTemp):
     
     minTemp = 1
     currentTemp = maxTemp
 
     while True:
+        refactors = prioritizeRefactors(parseFile(haskellFile),False)
+        codeEval.append({"file": haskellFile,"quality": evaluateCode(refactors)})
+        currentNeighbour = createNeighborhood(refactors, 1)[0]
+        
         refactor = random.choice(currentNeighbour)
+
         newRefactor = mutateRefactor(refactor)
         
         s = applyRefactor(haskellFile,refactor,'current')
@@ -91,15 +98,13 @@ def initSimulatedAnnealing(haskellFile,maxTemp):
             quality = sNewFit
         else:
             if random.random() < math.exp(-abs(delta)/currentTemp):
+                haskellFile = sNew
+                quality = sNewFit
+            else:
                 haskellFile = s
                 quality = sFit
         
-        codeEval.append({"file": haskellFile,"quality": quality})
-        
-        refactors = prioritizeRefactors(parseFile(haskellFile),False)
-        currentNeighbour = createNeighborhood(refactors, 1)[0]
-
-        currentTemp = currentTemp - 3
+        currentTemp = currentTemp - deltaTemp
 
         if currentTemp < minTemp:
             break
@@ -109,20 +114,20 @@ def deleteIntermediateFolders(folder):
     subprocess.run("rm -rf " + folder + "-*",stdout=subprocess.PIPE,shell=True)
 
 # Copia el ultimo archivo agregado a la variable codeEval al directorio del archivo que se quiere refactorizar con el numero de la iteracion.
-def copyLastFile(codeEval,refactorFileLocalization,iteration):
-    lastEvalFile = codeEval[-1]['file']
+def copyFile(codeEvalFile,refactorFileLocalization,iteration):
     fileLocalization,fullFileName,fileName,extension = extractFileFeatures(refactorFileLocalization)
-    subprocess.run("cp " + os.path.realpath(lastEvalFile) + " " + fileLocalization + fileName + '-' + str(iteration)  + "-refactored" + extension ,stdout=subprocess.PIPE,shell=True)
+    subprocess.run("cp " + os.path.realpath(codeEvalFile) + " " + fileLocalization + fileName + '-' + str(iteration)  + "-refactored" + extension ,stdout=subprocess.PIPE,shell=True)
 
 ### MAIN FUNCTION ###
 
 def main():
     parser = argparse.ArgumentParser(description='Tool for Haskell Code Refactoring')
-
     parser.add_argument("--file", type=str, required=True, help="file to refactor")
     parser.add_argument("--iterations", default=1, type=int, required=True, help="number of iterations")
     parser.add_argument("--type", choices=["SA", "interactive","random"], required=True, type=str, help="refactor mode")
-    parser.add_argument("--maxTempIterations", default=20, type=int, help="max temperature in simulated annealing (default = 20)")
+    parser.add_argument("--maxTemp", default=20, type=int, help="max temperature in simulated annealing (default = 20)")
+    parser.add_argument("--deltaTemp", default=3, type=int, help="decrease of temperature in simulated annealing (default = 3)")
+    parser.add_argument("--maxIterations", default=5, type=int, help="max iterations in random search method (default = 5)")
     interFiles_parser = parser.add_mutually_exclusive_group(required=False)
     interFiles_parser.add_argument('--intermediate-folders', dest='interFolders', action='store_true', help="save intermediate folders")
     interFiles_parser.add_argument('--no--intermediate-folders', dest='interFolders', action='store_false', help="don't save intermediate folders")
@@ -139,23 +144,23 @@ def main():
         for iteration in range(0,numIterations):
             print("Manual - Iteration number: " + str(iteration))
             initManualRefactoring(args.file)
-            copyLastFile(codeEval,refactorFileLocalization,iteration)
+            copyFile(codeEval[-1]['file'],refactorFileLocalization,iteration)
             print(codeEval)
             codeEval = []
     
     elif args.type == 'SA':
         for iteration in range (0,numIterations):
             print("SA - Iteration number: " + str(iteration))
-            initSimulatedAnnealing(args.file,args.maxTempIterations)
-            copyLastFile(codeEval,refactorFileLocalization,iteration)
+            initSimulatedAnnealing(args.file,args.maxTemp,args.deltaTemp)
+            copyFile(getBestQuality(codeEval),refactorFileLocalization,iteration)
             print(codeEval)
             codeEval = []
     
     elif args.type == 'random':
         for iteration in range (0,numIterations):
             print("Random - Iteration number: " + str(iteration))
-            initRandomRefactoring(args.file,args.maxTempIterations)
-            copyLastFile(codeEval,refactorFileLocalization,iteration)
+            initRandomRefactoring(args.file,args.maxIterations)
+            copyFile(codeEval[-1]['file'],refactorFileLocalization,iteration)
             print(codeEval)
             codeEval = []
     

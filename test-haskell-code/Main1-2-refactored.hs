@@ -1,11 +1,14 @@
+oldFunction :: Int -> Int
+oldFunction value
+   | value * 5 <= 10 = 5
+   | value * 5 > 10 = 2
+
 penFunct :: Int -> Int
 penFunct 2 = 10
 penFunct 4 = (case (4, 5) of (1, 2) -> 10
                              (2, 3) -> 20
-                             (3, 4) -> (case (1) of (value) | value * 5 <= 10 -> 5
-                                                            | value * 5 > 10 -> 2)
-                             (4, 5) -> (case (2) of (value) | value * 5 <= 10 -> 5
-                                                            | value * 5 > 10 -> 2)) 
+                             (3, 4) -> oldFunction 1
+                             (4, 5) -> oldFunction 2) 
 
 mediumFunction :: Int -> Int -> Int
 mediumFunction 2 3 = 1
